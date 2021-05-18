@@ -177,12 +177,12 @@
         "affectsGlobalScope": false
       },
       "../src/EnrollStudent.ts": {
-        "version": "55db9527637569a6a37ce888d93cbe5aa4b71d8c543f6530a60672bf7449ba33",
-        "signature": "8e563f04e69852531d1b18eb9b1de6ab9e7573ad14e70da501404b302ff14f34",
+        "version": "83fd02a56481dd37473883210d873a430decf6f06f356647d29d14e283d41a79",
+        "signature": "c549db9b7fe1c8e64bb5009a0e1226dea4a317b9c73f35ab0b8af862f1d15d67",
         "affectsGlobalScope": false
       },
       "../src/EnrollStudent.test.ts": {
-        "version": "2af33f5315757a949bf09faeb85396edf306ddc2799876a94b48ef0faa08ab9b",
+        "version": "5fa6a74ee06ee71da590f8cd127cebe0894e73c48b4c5a7c350c3e6f5f0df88f",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
         "affectsGlobalScope": false
       },
