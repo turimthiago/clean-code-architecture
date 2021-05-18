@@ -171,18 +171,23 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
         "affectsGlobalScope": false
       },
+      "../src/CpfValidator.ts": {
+        "version": "24da31fc8204cacb066942d4531aa38225f00039869bd09b3f093398e271954b",
+        "signature": "3a369258b448fb94b0ce2f4ad6c76a2b9241a8dd9dc64f2e9797be07797af820",
+        "affectsGlobalScope": false
+      },
       "../src/Student.ts": {
-        "version": "c81d00d7103014152a30e042a2d39262edb97f8761d1de40746acadd07b2e086",
-        "signature": "6e021090280493df7f47ebe1776cf10e96b4618954eda2cfcd498666fbbbbfc7",
+        "version": "3d92ece8783b5c8d29365126ade90cfe822127a9a6ddd35e62d3869642990697",
+        "signature": "fabaebb4cde1934a21241fd726f17efda5b3510b819eab99d63a27e10e4234fb",
         "affectsGlobalScope": false
       },
       "../src/EnrollStudent.ts": {
-        "version": "83fd02a56481dd37473883210d873a430decf6f06f356647d29d14e283d41a79",
-        "signature": "c549db9b7fe1c8e64bb5009a0e1226dea4a317b9c73f35ab0b8af862f1d15d67",
+        "version": "70bd0def7735e8313022a2974d9605f7cf284f5a2b170f7480f6b87951e41359",
+        "signature": "95499280f04347c7c91e57bdc8800ba389317639a4d6cf65ce9017d5a37be915",
         "affectsGlobalScope": false
       },
       "../src/EnrollStudent.test.ts": {
-        "version": "5fa6a74ee06ee71da590f8cd127cebe0894e73c48b4c5a7c350c3e6f5f0df88f",
+        "version": "155540162fc9ce192070e067eb4c86a9bf2b16b400dc1ede6cdb515854e8c3a4",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
         "affectsGlobalScope": false
       },
@@ -824,10 +829,12 @@
         "../src/Circle.ts"
       ],
       "../src/EnrollStudent.test.ts": [
+        "../src/CpfValidator.ts",
         "../src/EnrollStudent.ts",
         "../src/Student.ts"
       ],
       "../src/EnrollStudent.ts": [
+        "../src/CpfValidator.ts",
         "../src/Student.ts"
       ]
     },
@@ -1081,6 +1088,7 @@
         "../node_modules/pretty-format/build/types.d.ts"
       ],
       "../src/EnrollStudent.ts": [
+        "../src/CpfValidator.ts",
         "../src/Student.ts"
       ]
     },
@@ -1194,6 +1202,7 @@
       "../node_modules/typescript/lib/lib.webworker.importscripts.d.ts",
       "../src/Circle.test.ts",
       "../src/Circle.ts",
+      "../src/CpfValidator.ts",
       "../src/EnrollStudent.test.ts",
       "../src/EnrollStudent.ts",
       "../src/Student.ts"
