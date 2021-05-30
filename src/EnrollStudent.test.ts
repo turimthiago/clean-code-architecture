@@ -6,7 +6,11 @@ describe("EnrollStudent usecase", () => {
   test("Should not enroll without valid student name", async () => {
     const sut = new EnrollStudent();
     const enrollRequest = {
-      student: { name: "Ana", cpf: "00902486004" },
+      student: {
+        name: "Ana",
+        cpf: "00902486004",
+        birthDate: new Date("1900-01-01"),
+      },
       level: "EM",
       module: "1",
       class: "A",
@@ -18,7 +22,11 @@ describe("EnrollStudent usecase", () => {
   test("Should not enroll without valid student cpf", async () => {
     const sut = new EnrollStudent();
     const enrollRequest = {
-      student: { name: "Ana Silva", cpf: "123.456.789-99" },
+      student: {
+        name: "Ana Silva",
+        cpf: "123.456.789-99",
+        birthDate: new Date("1900-01-01"),
+      },
       level: "EM",
       module: "1",
       class: "A",
@@ -30,7 +38,11 @@ describe("EnrollStudent usecase", () => {
   test("Should not enroll duplicated student", async () => {
     const sut = new EnrollStudent();
     const enrollRequest = {
-      student: { name: "John Winston Lennon", cpf: "93093168023" },
+      student: {
+        name: "John Winston Lennon",
+        cpf: "93093168023",
+        birthDate: new Date("1900-01-01"),
+      },
       level: "EM",
       module: "1",
       class: "A",
@@ -42,15 +54,35 @@ describe("EnrollStudent usecase", () => {
     );
   });
 
-  test("Should generate enrollment code ", async () => {
+  test("Should generate enrollment code", async () => {
     const sut = new EnrollStudent();
     const enrollRequest = {
-      student: { name: "John Winston Lennon", cpf: "93093168023" },
+      student: {
+        name: "John Winston Lennon",
+        cpf: "93093168023",
+        birthDate: new Date("1900-01-01"),
+      },
       level: "EM",
       module: "1",
       class: "A",
     };
     const registration = await sut.execute(enrollRequest);
-    expect(registration.registration.code).toEqual("2021EM1A0001")
+    expect(registration.registration.code).toEqual("2021EM1A0001");
+  });
+
+  test("Should not enroll student below minimum age", async () => {
+    const sut = new EnrollStudent();
+    const enrollRequest = {
+      student: {
+        name: "John Winston Lennon",
+        cpf: "93093168023",
+        birthDate: new Date("2021-01-01"),
+      },
+      level: "EM",
+      module: "1",
+      class: "A",
+    };
+    const promise = sut.execute(enrollRequest);
+    await expect(promise).rejects.toThrow("Student below minimum age");
   });
 });
