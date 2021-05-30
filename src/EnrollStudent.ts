@@ -12,7 +12,8 @@ export class EnrollStudent {
   async execute(enrollmentRequest: EnrollmentRequest) {
     const student = new Student(
       enrollmentRequest.student.name,
-      enrollmentRequest.student.cpf
+      enrollmentRequest.student.cpf,
+      enrollmentRequest.student.birthDate
     );
     const registration = new Registration(
       enrollmentRequest.level,
@@ -44,6 +45,7 @@ export type EnrollmentRequest = {
   student: {
     name: string;
     cpf: string;
+    birthDate : Date;
   };
   level: string;
   module: string;
