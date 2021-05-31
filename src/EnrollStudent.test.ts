@@ -1,6 +1,4 @@
-import { CpfValidator } from "./CpfValidator";
 import { EnrollStudent } from "./EnrollStudent";
-import { Student } from "./Student";
 
 describe("EnrollStudent usecase", () => {
   test("Should not enroll without valid student name", async () => {
@@ -12,7 +10,7 @@ describe("EnrollStudent usecase", () => {
         birthDate: new Date("1900-01-01"),
       },
       level: "EM",
-      module: "1",
+      module: "3",
       class: "A",
     };
     const promise = sut.execute(enrollRequest);
@@ -28,7 +26,7 @@ describe("EnrollStudent usecase", () => {
         birthDate: new Date("1900-01-01"),
       },
       level: "EM",
-      module: "1",
+      module: "3",
       class: "A",
     };
     const promise = sut.execute(enrollRequest);
@@ -44,7 +42,7 @@ describe("EnrollStudent usecase", () => {
         birthDate: new Date("1900-01-01"),
       },
       level: "EM",
-      module: "1",
+      module: "3",
       class: "A",
     };
     await sut.execute(enrollRequest);
@@ -63,11 +61,11 @@ describe("EnrollStudent usecase", () => {
         birthDate: new Date("1900-01-01"),
       },
       level: "EM",
-      module: "1",
+      module: "3",
       class: "A",
     };
     const registration = await sut.execute(enrollRequest);
-    expect(registration.registration.code).toEqual("2021EM1A0001");
+    expect(registration.registration.code).toEqual("2021EM3A0001");
   });
 
   test("Should not enroll student below minimum age", async () => {
@@ -76,10 +74,10 @@ describe("EnrollStudent usecase", () => {
       student: {
         name: "John Winston Lennon",
         cpf: "93093168023",
-        birthDate: new Date("2021-01-01"),
+        birthDate: new Date("2019-01-01"),
       },
       level: "EM",
-      module: "1",
+      module: "3",
       class: "A",
     };
     const promise = sut.execute(enrollRequest);
