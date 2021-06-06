@@ -132,4 +132,20 @@ describe("EnrollStudent usecase", () => {
       new Error("Classroom is over capacity")
     );
   });
+
+  test("Should not enroll after que end of the class", async () => {
+    const enrollmentRequest = {
+      student: {
+        name: "Maria Carolina Fonseca",
+        cpf: "755.525.774-26",
+        birthDate: "2002-03-12",
+      },
+      level: "EM",
+      module: "1",
+      classroom: "A",
+    };
+    expect(() => sut.execute(enrollmentRequest)).toThrow(
+      new Error("Class is already finished")
+    );
+  });
 });
