@@ -11,7 +11,7 @@ export default class ClassroomRepositoryMemory implements ClassroomRepository {
         code: "A",
         capacity: 2,
         startDate: "2021-01-01",
-        endDate: "2021-01-01",
+        endDate: "2021-01-30",
       },
     ];
   }

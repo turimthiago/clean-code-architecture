@@ -24,7 +24,12 @@ export default class EnrollStudent {
         const level = this.levelRepository.findByCode(enrollmentRequest.level);
         const module = this.moduleRepository.findByCode(enrollmentRequest.level, enrollmentRequest.module);
         const classroom = this.classroomRepository.findByCode(enrollmentRequest.classroom);
-        if(new Date(classroom.startDate) > new Date() || new Date(classroom.endDate) < new Date()) throw new Error("Class is already finished");
+        const enrollmentDate = new Date(enrollmentRequest.date) || new Date();
+        if(new Date(classroom.endDate) < enrollmentDate) throw new Error("Class is already finished");
+        const daysLeft = (new Date(classroom.endDate).getTime() - new Date(classroom.startDate).getTime())/(24*3600*1000);
+        const daysValid = (daysLeft+(daysLeft * 0.25));
+        const daysLeftNow = (enrollmentDate.getTime() - new Date(classroom.startDate).getTime())/(24*3600*1000);
+        if(daysValid >= daysLeftNow)throw new Error("Class is already started");
         if (student.age < module.minimumAge) throw new Error("Student below minimum age");
         const studentsEnrolledInClassroom = this.enrollmentRepository.findByClassroom(level.code, module.code, classroom.code);
         if (studentsEnrolledInClassroom.length === classroom.capacity) throw new Error("Classroom is over capacity");
