@@ -1,79 +1,39 @@
+import ClassroomRepository from "./ClassroomRepository";
+import Enrollment from "./Enrollment";
+import { EnrollmentRepository } from "./EnrollmentRepository";
+import LevelRepository from "./LevelRepository";
+import ModuleRepository from "./ModuleRepository";
 import { Registration } from "./Registration";
-import { Student } from "./Student";
-import { data } from "./data";
+import Student from "./Student";
 
-export class EnrollStudent {
-  enrollments: any[];
+export default class EnrollStudent {
+    levelRepository: LevelRepository;
+    moduleRepository: ModuleRepository;
+    classroomRepository: ClassroomRepository;
+    enrollmentRepository: EnrollmentRepository;
 
-  constructor() {
-    this.enrollments = [];
-  }
-
-  async execute(enrollmentRequest: EnrollmentRequest) {
-    const existingEnrollment = this.enrollments.find(
-      (enrollment) =>
-        enrollment.student.cpf.value === enrollmentRequest.student.cpf
-    );
-    if (existingEnrollment) {
-      throw new Error("Enrollment with duplicated student is not allowed");
+    constructor (levelRepository: LevelRepository, moduleRepository: ModuleRepository, classRepository: ClassroomRepository, enrollmentRepository: EnrollmentRepository) {
+        this.levelRepository = levelRepository;
+        this.moduleRepository = moduleRepository;
+        this.classroomRepository = classRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
-    const level = data.levels.find(
-      (level) => level.code === enrollmentRequest.level
-    );
-    if (!level) {
-      throw new Error("Level is not found");
+    
+    execute (enrollmentRequest: any) {
+        const student = new Student(enrollmentRequest.student.name, enrollmentRequest.student.cpf, enrollmentRequest.student.birthDate);
+        const level = this.levelRepository.findByCode(enrollmentRequest.level);
+        const module = this.moduleRepository.findByCode(enrollmentRequest.level, enrollmentRequest.module);
+        const classroom = this.classroomRepository.findByCode(enrollmentRequest.classroom);
+        if (student.age < module.minimumAge) throw new Error("Student below minimum age");
+        const studentsEnrolledInClassroom = this.enrollmentRepository.findByClassroom(level.code, module.code, classroom.code);
+        if (studentsEnrolledInClassroom.length === classroom.capacity) throw new Error("Classroom is over capacity");
+        const existingEnrollment = this.enrollmentRepository.findByCpf(enrollmentRequest.student.cpf);
+        if (existingEnrollment) throw new Error("Enrollment with duplicated student is not allowed");
+        const sequence = new String(this.enrollmentRepository.count() + 1).toString();
+        const registration = new Registration(level.code, module.code, classroom.code, sequence);//`${enrollmentDate.getFullYear()}${level.code}${module.code}${classroom.code}${sequence}`;
+        const enrollment = new Enrollment(registration, student, level.code, module.code, classroom.code);
+        
+        this.enrollmentRepository.save(enrollment);
+        return enrollment;
     }
-    const module = data.modules.find(
-      (module) =>
-        module.level === level.code && module.code === enrollmentRequest.module
-    );
-    if (!module) {
-      throw new Error("Module is not found");
-    }
-    const clazz = data.classes.find(
-      (clazz) =>
-        clazz.module === module.code &&
-        clazz.level === level.code &&
-        clazz.code === enrollmentRequest.class
-    );
-    if (!clazz) {
-      throw new Error("Class is not found");
-    }
-    const student = new Student(
-      enrollmentRequest.student.name,
-      enrollmentRequest.student.cpf,
-      enrollmentRequest.student.birthDate
-    );
-    if (module.minimumAge > student.age) {
-      throw new Error("Student below minimum age");
-    }
-    const registration = new Registration(
-      enrollmentRequest.level,
-      enrollmentRequest.module,
-      enrollmentRequest.class,
-      this.enrollments.length + 1
-    );
-    const enrollment = {
-      student,
-      level: enrollmentRequest.level,
-      module: enrollmentRequest.module,
-      class: enrollmentRequest.class,
-      registration: {
-        code: registration.code,
-      },
-    };
-    this.enrollments.push(enrollment);
-    return enrollment;
-  }
 }
-
-export type EnrollmentRequest = {
-  student: {
-    name: string;
-    cpf: string;
-    birthDate: Date;
-  };
-  level: string;
-  module: string;
-  class: string;
-};

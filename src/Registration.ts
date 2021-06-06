@@ -4,15 +4,15 @@ export class Registration {
     private readonly level: string,
     private readonly module: string,
     private readonly clazz: string,
-    nextEnrollmentId: number
+    sequence: string
   ) {
-    this._code = this.generateCode(nextEnrollmentId);
+    this._code = this.generateCode(sequence);
   }
 
-  generateCode(nextEnrollmentId: number): string {
+  generateCode(sequence: string): string {
     return `${new Date().getFullYear()}${this.level}${this.module}${
       this.clazz
-    }${nextEnrollmentId.toString().padStart(4, "0")}`;
+    }${sequence.toString().padStart(4, "0")}`;
   }
 
   get code(): string {
