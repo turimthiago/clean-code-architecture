@@ -140,12 +140,30 @@ describe("EnrollStudent usecase", () => {
         cpf: "755.525.774-26",
         birthDate: "2002-03-12",
       },
+      date: "2021-02-01",
       level: "EM",
       module: "1",
       classroom: "A",
     };
     expect(() => sut.execute(enrollmentRequest)).toThrow(
       new Error("Class is already finished")
+    );
+  });
+
+  test("Should not enroll after 25% of the start of the class", async () => {
+    const enrollmentRequest = {
+      student: {
+        name: "Maria Carolina Fonseca",
+        cpf: "755.525.774-26",
+        birthDate: "2002-03-12",
+      },
+      date: "2021-01-20",
+      level: "EM",
+      module: "1",
+      classroom: "A",
+    };
+    expect(() => sut.execute(enrollmentRequest)).toThrow(
+      new Error("Class is already started")
     );
   });
 });
