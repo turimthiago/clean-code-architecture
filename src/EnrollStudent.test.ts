@@ -166,4 +166,22 @@ describe("EnrollStudent usecase", () => {
       new Error("Class is already started")
     );
   });
+
+  test("Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice", async () => {
+    const enrollmentRequest = {
+      student: {
+        name: "Maria Carolina Fonseca",
+        cpf: "755.525.774-26",
+        birthDate: "2002-03-12",
+      },
+      date: "2021-01-01",
+      level: "EM",
+      module: "1",
+      classroom: "A",
+      installments: 12
+    };
+    const enrollment = sut.execute(enrollmentRequest);
+    const totalInstallments = enrollment.installments.reduce((sum, price)=>sum+price);
+    expect(totalInstallments).toEqual(17000);
+  });
 });
