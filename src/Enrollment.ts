@@ -7,6 +7,7 @@ export default class Enrollment {
     module: string;
     classroom: string;
     registration : Registration;
+    installments : number[] = [];
     
     constructor (registration : Registration, student: Student, level: string, module: string, classroom: string) {
         this.student = student;

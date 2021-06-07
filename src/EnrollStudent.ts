@@ -27,9 +27,9 @@ export default class EnrollStudent {
         const enrollmentDate = new Date(enrollmentRequest.date) || new Date();
         if(new Date(classroom.endDate) < enrollmentDate) throw new Error("Class is already finished");
         const daysLeft = (new Date(classroom.endDate).getTime() - new Date(classroom.startDate).getTime())/(24*3600*1000);
-        const daysValid = (daysLeft+(daysLeft * 0.25));
-        const daysLeftNow = (enrollmentDate.getTime() - new Date(classroom.startDate).getTime())/(24*3600*1000);
-        if(daysValid >= daysLeftNow)throw new Error("Class is already started");
+        const minimumDays = (daysLeft-(daysLeft * 0.25));
+        const daysLeftNow = (new Date(classroom.endDate).getTime() - enrollmentDate.getTime())/(24*3600*1000);
+        if(minimumDays >= daysLeftNow)throw new Error("Class is already started");
         if (student.age < module.minimumAge) throw new Error("Student below minimum age");
         const studentsEnrolledInClassroom = this.enrollmentRepository.findByClassroom(level.code, module.code, classroom.code);
         if (studentsEnrolledInClassroom.length === classroom.capacity) throw new Error("Classroom is over capacity");
@@ -38,8 +38,13 @@ export default class EnrollStudent {
         const sequence = new String(this.enrollmentRepository.count() + 1).toString();
         const registration = new Registration(level.code, module.code, classroom.code, sequence);//`${enrollmentDate.getFullYear()}${level.code}${module.code}${classroom.code}${sequence}`;
         const enrollment = new Enrollment(registration, student, level.code, module.code, classroom.code);
-        
         this.enrollmentRepository.save(enrollment);
+        const numberInstallments  = enrollmentRequest.installments;
+        const valueInstallment = Math.floor(module.price/enrollmentRequest.installments);
+        const installments  = Array(numberInstallments).fill(valueInstallment);
+        const totalInstallments = installments.reduce((total, item)=>total+=item);
+        installments[installments.length-1] = valueInstallment +(module.price - totalInstallments);
+        enrollment.installments = installments;
         return enrollment;
     }
 }

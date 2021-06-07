@@ -91,6 +91,9 @@ export default class ModuleRepositoryMemory implements ModuleRepository {
 			}
 		];
     }
+	findByLevel(code: string): any[] {
+		return this.modules.filter(module=>module.level === code);
+	}
 
     findByCode(level: string, code: string) {
         const module = this.modules.find(module => module.level === level && module.code === code);
