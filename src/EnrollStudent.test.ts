@@ -69,19 +69,18 @@ describe("EnrollStudent usecase", () => {
     );
   });
 
-  test("Should generate enrollment code", async () => {
-    const enrollRequest = {
+  test("Should generate enrollment code", function () {
+    const enrollmentRequest = {
       student: {
-        name: "John Winston Lennon",
-        cpf: "93093168023",
-        birthDate: new Date("1900-01-01"),
+        name: "Ana Maria",
+        cpf: "864.464.227-84",
       },
       level: "EM",
       module: "1",
       classroom: "A",
     };
-    const registration = await sut.execute(enrollRequest);
-    expect(registration.registration.code).toEqual("2021EM1A0001");
+    const enrollment = sut.execute(enrollmentRequest);
+    expect(enrollment.code.value).toBe("2021EM1A0001");
   });
 
   test("Should not enroll student below minimum age", async () => {
@@ -144,6 +143,7 @@ describe("EnrollStudent usecase", () => {
       level: "EM",
       module: "1",
       classroom: "A",
+      issueDate: "2021-12-16",
     };
     expect(() => sut.execute(enrollmentRequest)).toThrow(
       new Error("Class is already finished")
@@ -153,14 +153,13 @@ describe("EnrollStudent usecase", () => {
   test("Should not enroll after 25% of the start of the class", async () => {
     const enrollmentRequest = {
       student: {
-        name: "Maria Carolina Fonseca",
-        cpf: "755.525.774-26",
-        birthDate: "2002-03-12",
+        name: "Ana Maria",
+        cpf: "864.464.227-84",
       },
-      date: "2021-01-20",
       level: "EM",
       module: "1",
-      classroom: "A",
+      classroom: "C",
+      issueDate: "2021-06-29",
     };
     expect(() => sut.execute(enrollmentRequest)).toThrow(
       new Error("Class is already started")
@@ -170,18 +169,17 @@ describe("EnrollStudent usecase", () => {
   test("Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice", async () => {
     const enrollmentRequest = {
       student: {
-        name: "Maria Carolina Fonseca",
-        cpf: "755.525.774-26",
-        birthDate: "2002-03-12",
+        name: "Ana Maria",
+        cpf: "864.464.227-84",
       },
-      date: "2021-01-01",
       level: "EM",
       module: "1",
       classroom: "A",
-      installments: 12
+      installments: 12,
     };
     const enrollment = sut.execute(enrollmentRequest);
-    const totalInstallments = enrollment.installments.reduce((sum, price)=>sum+price);
-    expect(totalInstallments).toEqual(17000);
+    expect(enrollment.invoices).toHaveLength(12);
+    expect(enrollment.invoices[0].amount).toBe(1416.66);
+    expect(enrollment.invoices[11].amount).toBe(1416.73);
   });
 });

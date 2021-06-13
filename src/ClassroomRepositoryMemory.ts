@@ -1,18 +1,35 @@
-import ClassroomRepository from "./ClassroomRepository";
+import Classroom from "./Classroom";
+import ClassroomRepository from "./ClassRoomRepository";
 
 export default class ClassroomRepositoryMemory implements ClassroomRepository {
   classrooms: any[];
 
   constructor() {
     this.classrooms = [
-      {
+      new Classroom({
         level: "EM",
         module: "3",
         code: "A",
         capacity: 2,
-        startDate: "2021-01-01",
-        endDate: "2021-01-30",
-      },
+        startDate: new Date("2021-06-01"),
+        endDate: new Date("2021-12-15"),
+      }),
+      new Classroom({
+        level: "EM",
+        module: "3",
+        code: "B",
+        capacity: 2,
+        startDate: new Date("2021-05-01"),
+        endDate: new Date("2021-05-30"),
+      }),
+      new Classroom({
+        level: "EM",
+        module: "3",
+        code: "C",
+        capacity: 2,
+        startDate: new Date("2021-05-01"),
+        endDate: new Date("2021-06-30"),
+      }),
     ];
   }
 
