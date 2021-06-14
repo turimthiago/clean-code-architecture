@@ -8,5 +8,7 @@ export interface EnrollmentRepository {
     classroom: string
   ): Enrollment[];
   findByCpf(cpf: string): Enrollment | undefined;
+  findByEnrollmentCode(code: string): Enrollment | undefined;
+  update(enrollment: Enrollment): void;
   count(): number;
 }

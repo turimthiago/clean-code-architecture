@@ -30,6 +30,14 @@ export default class ClassroomRepositoryMemory implements ClassroomRepository {
         startDate: new Date("2021-05-01"),
         endDate: new Date("2021-06-30"),
       }),
+      new Classroom({
+        level: "EM",
+        module: "1",
+        code: "A",
+        capacity: 2,
+        startDate: new Date("2021-05-01"),
+        endDate: new Date("2021-06-30"),
+      }),
     ];
   }
 
@@ -37,7 +45,9 @@ export default class ClassroomRepositoryMemory implements ClassroomRepository {
     const classroom = this.classrooms.find(
       (classroom) => classroom.code === code
     );
-    if (!classroom) throw new Error("Classroom not found");
+    if (!classroom) {
+      throw new Error("Classroom not found");
+    }
     return classroom;
   }
 }

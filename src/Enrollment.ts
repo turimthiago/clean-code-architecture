@@ -15,6 +15,7 @@ export default class Enrollment {
   issueDate: Date;
   installments: number;
   invoices: Invoice[];
+  status: string = "ACTIVE";
 
   constructor(
     student: Student,

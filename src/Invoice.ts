@@ -3,6 +3,7 @@ export default class Invoice {
   month: number;
   year: number;
   amount: number;
+  paid: boolean = false;
 
   constructor(code: string, month: number, year: number, amount: number) {
     this.code = code;

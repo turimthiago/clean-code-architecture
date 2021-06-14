@@ -9,6 +9,17 @@ export default class EnrollmentRepositoryMemory
   constructor() {
     this.enrollments = [];
   }
+  update(enrollment: Enrollment): void {
+    const index = this.enrollments.findIndex(
+      (enrollment) => enrollment.code.value === enrollment.code.value
+    );
+    this.enrollments[index] = enrollment;
+  }
+  findByEnrollmentCode(code: string): Enrollment | undefined {
+    return this.enrollments.find(
+      (enrollment) => enrollment.code.value === code
+    );
+  }
 
   save(enrollment: Enrollment): void {
     this.enrollments.push(enrollment);

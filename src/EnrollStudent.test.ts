@@ -29,7 +29,7 @@ describe("EnrollStudent usecase", () => {
       },
       level: "EM",
       module: "3",
-      class: "A",
+      classroom: "A",
     };
     expect(() => sut.execute(enrollmentRequest)).toThrow(
       new Error("Invalid name")
@@ -45,7 +45,7 @@ describe("EnrollStudent usecase", () => {
       },
       level: "EM",
       module: "3",
-      class: "A",
+      classroom: "A",
     };
     expect(() => sut.execute(enrollmentRequest)).toThrow(
       new Error("Invalid cpf")
