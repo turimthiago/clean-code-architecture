@@ -1,18 +1,19 @@
-import { EnrollmentRepository } from "./EnrollmentRepository";
-
+import EnrollmentRepository from "./EnrollmentRepository";
+import RepositoryAbstractFactory from "./RepositoryAbstractFactory";
 export default class GetEnrollment {
-  constructor(private readonly enrollmentRepository: EnrollmentRepository) {}
+  enrollmentRepository: EnrollmentRepository;
 
-  execute(requestGetEnrollment: any): any {
-    const enrollment = this.enrollmentRepository.findByEnrollmentCode(
-      requestGetEnrollment.code
-    );
-    if (!enrollment) throw Error("Enrollment not found.");
+  constructor(repositoryFactory: RepositoryAbstractFactory) {
+    this.enrollmentRepository = repositoryFactory.createEnrollmentRepository();
+  }
 
-    const balance = enrollment.invoices.reduce(
-      (total, invoice) => (total += invoice.amount),
-      0
-    );
-    return { enrollment, balance };
+  execute(code: string): any {
+    const enrollment = this.enrollmentRepository.getByCode(code);
+    const balance = enrollment?.getInvoiceBalance();
+    return {
+      code: enrollment?.code.value,
+      balance,
+      activate: enrollment?.isActivate(),
+    };
   }
 }

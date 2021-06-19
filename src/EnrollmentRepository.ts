@@ -1,6 +1,6 @@
 import Enrollment from "./Enrollment";
 
-export interface EnrollmentRepository {
+export default interface EnrollmentRepository {
   save(enrollment: Enrollment): void;
   findAllByClassroom(
     level: string,
@@ -8,7 +8,7 @@ export interface EnrollmentRepository {
     classroom: string
   ): Enrollment[];
   findByCpf(cpf: string): Enrollment | undefined;
-  findByEnrollmentCode(code: string): Enrollment | undefined;
-  update(enrollment: Enrollment): void;
+  getByCode(code: string): Enrollment | undefined;
   count(): number;
+  update(enrollment: Enrollment): void;
 }

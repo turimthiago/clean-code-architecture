@@ -1,9 +1,10 @@
 import Classroom from "./Classroom";
 import EnrollmentCode from "./EnrollmentCode";
-import Level from "./Level";
-import Student from "./Student";
-import Module from "./Module";
 import Invoice from "./Invoice";
+import InvoiceEvent from "./InvoiceEvent";
+import Level from "./Level";
+import Module from "./Module";
+import Student from "./Student";
 
 export default class Enrollment {
   student: Student;
@@ -15,7 +16,7 @@ export default class Enrollment {
   issueDate: Date;
   installments: number;
   invoices: Invoice[];
-  status: string = "ACTIVE";
+  dtCancelled?: Date;
 
   constructor(
     student: Student,
@@ -69,5 +70,29 @@ export default class Enrollment {
     }, 0);
     const rest = Math.trunc((this.module.price - total) * 100) / 100;
     this.invoices[this.installments - 1].amount = installmentAmount + rest;
+  }
+
+  getInvoiceBalance() {
+    return this.invoices.reduce((total, invoice) => {
+      total += invoice.getBalance();
+      return total;
+    }, 0);
+  }
+
+  getInvoice(month: number, year: number): Invoice | undefined {
+    const invoice = this.invoices.find(
+      (invoice) => invoice.month === month && invoice.year === year
+    );
+    return invoice;
+  }
+
+  payInvoice(month: number, year: number, amount: number) {
+    const invoice = this.getInvoice(month, year);
+    if (!invoice) throw new Error("Invalid invoice");
+    invoice.addEvent(new InvoiceEvent("payment", amount));
+  }
+
+  isActivate() {
+    return !this.dtCancelled;
   }
 }

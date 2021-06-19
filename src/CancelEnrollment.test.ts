@@ -1,48 +1,39 @@
 import CancelEnrollment from "./CancelEnrollment";
-import ClassroomRepositoryMemory from "./ClassroomRepositoryMemory";
-import { EnrollmentRepository } from "./EnrollmentRepository";
+import EnrollmentRepository from "./EnrollmentRepository";
 import GetEnrollment from "./GetEnrollment";
-import EnrollmentRepositoryMemory from "./EnrollmentRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
-import LevelRepositoryMemory from "./LevelRepositoryMemory";
-import ModuleRepositoryMemory from "./ModuleRepositoryMemory";
+import RepositoryMemoryFactory from "./RepositoryMemoryFactory";
+import EnrollStudentInputData from "./EnrollStudentInputData";
+import { transpileModule } from "typescript";
 
 describe("CancelEnrollment usecase", () => {
-  let enrollmentRepository: EnrollmentRepository;
+  let repositoryMemoryFactory: RepositoryMemoryFactory;
+  let getEnrollment: GetEnrollment;
 
   beforeEach(() => {
-    enrollmentRepository = new EnrollmentRepositoryMemory();
-    const levelRepository = new LevelRepositoryMemory();
-    const moduleRepository = new ModuleRepositoryMemory();
-    const classroomRepository = new ClassroomRepositoryMemory();
-    const enrollStudent = new EnrollStudent(
-      levelRepository,
-      moduleRepository,
-      classroomRepository,
-      enrollmentRepository
-    );
+    repositoryMemoryFactory = new RepositoryMemoryFactory();
+    const enrollStudent = new EnrollStudent(repositoryMemoryFactory);
+    getEnrollment = new GetEnrollment(repositoryMemoryFactory);
 
-    const enrollmentRequest = {
-      student: {
-        name: "John Winston Ono Lennon",
-        cpf: "00902486004",
-        birthDate: new Date("1900-01-01"),
-      },
+    const enrollmentRequest = new EnrollStudentInputData({
+      studentName: "Ana Maria",
+      studentCpf: "864.464.227-84",
+      studentBirthDate: "2002-10-10",
       level: "EM",
       module: "1",
       classroom: "A",
-      issueDate: "2021-05-30",
-    };
+      installments: 12,
+    });
     enrollStudent.execute(enrollmentRequest);
   });
-  test.only("Should cancel enrollment", () => {
+  test("Should cancel enrollment", () => {
     const request = {
       code: "2021EM1A0001",
+      dtCancel: "2021-01-01",
     };
-    const sut = new CancelEnrollment(enrollmentRepository);
+    const sut = new CancelEnrollment(repositoryMemoryFactory);
     sut.execute(request);
-    const getEnrollment = new GetEnrollment(enrollmentRepository);
-    const enrollmentData = getEnrollment.execute(request);
-    expect(enrollmentData.enrollment.status).toEqual("CANCELLED");
+    const enrollmentData = getEnrollment.execute("2021EM1A0001");
+    expect(enrollmentData.activate).toEqual(false);
   });
 });

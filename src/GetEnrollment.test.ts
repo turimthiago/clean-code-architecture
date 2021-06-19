@@ -1,46 +1,29 @@
-import ClassroomRepositoryMemory from "./ClassroomRepositoryMemory";
-import { EnrollmentRepository } from "./EnrollmentRepository";
-import EnrollmentRepositoryMemory from "./EnrollmentRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
+import EnrollStudentInputData from "./EnrollStudentInputData";
 import GetEnrollment from "./GetEnrollment";
-import LevelRepositoryMemory from "./LevelRepositoryMemory";
-import ModuleRepositoryMemory from "./ModuleRepositoryMemory";
+import RepositoryMemoryFactory from "./RepositoryMemoryFactory";
 
-describe("GetEnrollment usecase", () => {
-  let enrollmentRepository: EnrollmentRepository;
+let enrollStudent: EnrollStudent;
+let getEnrollment: GetEnrollment;
 
-  beforeEach(() => {
-    enrollmentRepository = new EnrollmentRepositoryMemory();
-    const levelRepository = new LevelRepositoryMemory();
-    const moduleRepository = new ModuleRepositoryMemory();
-    const classroomRepository = new ClassroomRepositoryMemory();
-    const enrollStudent = new EnrollStudent(
-      levelRepository,
-      moduleRepository,
-      classroomRepository,
-      enrollmentRepository
-    );
-    const enrollmentRequest = {
-      student: {
-        name: "John Winston Ono Lennon",
-        cpf: "00902486004",
-        birthDate: new Date("1900-01-01"),
-      },
-      level: "EM",
-      module: "1",
-      classroom: "A",
-      issueDate: "2021-05-30",
-    };
-    enrollStudent.execute(enrollmentRequest);
+beforeEach(function () {
+  const repositoryMemoryFactory = new RepositoryMemoryFactory();
+  enrollStudent = new EnrollStudent(repositoryMemoryFactory);
+  getEnrollment = new GetEnrollment(repositoryMemoryFactory);
+});
+
+test("Should get enrollment with balance", function () {
+  const enrollmentRequest = new EnrollStudentInputData({
+    studentName: "Ana Maria",
+    studentCpf: "864.464.227-84",
+    studentBirthDate: "2002-10-10",
+    level: "EM",
+    module: "1",
+    classroom: "A",
+    installments: 12,
   });
-
-  test("Should get enrollment by code with invoice balance", () => {
-    const request = { code: "2021EM1A0001" };
-    const sut = new GetEnrollment(enrollmentRepository);
-    const getEnrollment = sut.execute(request);
-    expect(getEnrollment.enrollment.student.name.value).toEqual(
-      "John Winston Ono Lennon"
-    );
-    expect(getEnrollment.balance).toEqual(16999.99);
-  });
+  enrollStudent.execute(enrollmentRequest);
+  const getEnrollmentOutputData = getEnrollment.execute("2021EM1A0001");
+  expect(getEnrollmentOutputData.code).toBe("2021EM1A0001");
+  expect(getEnrollmentOutputData.balance).toBe(16999.99);
 });

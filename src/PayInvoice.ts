@@ -1,19 +1,16 @@
-import { EnrollmentRepository } from "./EnrollmentRepository";
-import InvoiceRepository from "./InvoiceRepository";
+import EnrollmentRepository from "./EnrollmentRepository";
+import RepositoryAbstractFactory from "./RepositoryAbstractFactory";
 
 export default class PayInvoice {
-  constructor(private readonly enrollmentRepository: EnrollmentRepository) {}
+  enrollmentRepository: EnrollmentRepository;
 
-  execute(payRequest: any): void {
-    const enrollment = this.enrollmentRepository.findByEnrollmentCode(
-      payRequest.code
-    );
-    if (!enrollment) throw new Error("Enrollment not found.");
-    const invoice = enrollment.invoices.find(
-      (invoice) =>
-        invoice.month === payRequest.month && invoice.year === payRequest.year
-    );
-    if (!invoice) throw new Error("Invoice not found");
-    invoice.amount -= payRequest.amount;
+  constructor(repositoryFactory: RepositoryAbstractFactory) {
+    this.enrollmentRepository = repositoryFactory.createEnrollmentRepository();
+  }
+
+  execute(code: string, month: number, year: number, amount: number): any {
+    const enrollment = this.enrollmentRepository.getByCode(code);
+    if (!enrollment) throw new Error("Enrollment not found");
+    enrollment.payInvoice(month, year, amount);
   }
 }

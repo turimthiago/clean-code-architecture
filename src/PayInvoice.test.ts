@@ -1,52 +1,35 @@
-import ClassroomRepositoryMemory from "./ClassroomRepositoryMemory";
-import { EnrollmentRepository } from "./EnrollmentRepository";
-import EnrollmentRepositoryMemory from "./EnrollmentRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
+import EnrollStudentInputData from "./EnrollStudentInputData";
 import GetEnrollment from "./GetEnrollment";
-import LevelRepositoryMemory from "./LevelRepositoryMemory";
-import ModuleRepositoryMemory from "./ModuleRepositoryMemory";
 import PayInvoice from "./PayInvoice";
+import RepositoryMemoryFactory from "./RepositoryMemoryFactory";
 
-describe("PayInvoice usecase", () => {
-  let enrollmentRepository: EnrollmentRepository;
+let enrollStudent: EnrollStudent;
+let getEnrollment: GetEnrollment;
+let payInvoice: PayInvoice;
 
-  beforeEach(() => {
-    enrollmentRepository = new EnrollmentRepositoryMemory();
-    const levelRepository = new LevelRepositoryMemory();
-    const moduleRepository = new ModuleRepositoryMemory();
-    const classroomRepository = new ClassroomRepositoryMemory();
-    const enrollStudent = new EnrollStudent(
-      levelRepository,
-      moduleRepository,
-      classroomRepository,
-      enrollmentRepository
-    );
-    const enrollmentRequest = {
-      student: {
-        name: "John Winston Ono Lennon",
-        cpf: "00902486004",
-        birthDate: new Date("1900-01-01"),
-      },
-      level: "EM",
-      module: "1",
-      classroom: "A",
-      issueDate: "2021-05-30",
-    };
-    enrollStudent.execute(enrollmentRequest);
+beforeEach(function () {
+  const repositoryMemoryFactory = new RepositoryMemoryFactory();
+  enrollStudent = new EnrollStudent(repositoryMemoryFactory);
+  getEnrollment = new GetEnrollment(repositoryMemoryFactory);
+  payInvoice = new PayInvoice(repositoryMemoryFactory);
+});
+
+test.only("Should pay enrollment invoice", function () {
+  const enrollmentRequest = new EnrollStudentInputData({
+    studentName: "Ana Maria",
+    studentCpf: "864.464.227-84",
+    studentBirthDate: "2002-10-10",
+    level: "EM",
+    module: "1",
+    classroom: "A",
+    installments: 12,
   });
+  enrollStudent.execute(enrollmentRequest);
 
-  test("Should pay enrollment invoice", () => {
-    const request = {
-      code: "2021EM1A0001",
-      month: 1,
-      year: 2021,
-      amount: 1000,
-    };
-    const sut = new PayInvoice(enrollmentRepository);
-    sut.execute(request);
+  payInvoice.execute("2021EM1A0001", 1, 2021, 1416.66);
 
-    const getEnrollment = new GetEnrollment(enrollmentRepository);
-    const enrollment = getEnrollment.execute({ code: request.code });
-    expect(enrollment.balance).toEqual(15999.99);
-  });
+  const getEnrollmentOutputData = getEnrollment.execute("2021EM1A0001");
+  expect(getEnrollmentOutputData.code).toBe("2021EM1A0001");
+  expect(getEnrollmentOutputData.balance).toBe(15583.33);
 });

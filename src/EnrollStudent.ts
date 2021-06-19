@@ -1,8 +1,11 @@
 import ClassroomRepository from "./ClassRoomRepository";
 import Enrollment from "./Enrollment";
-import { EnrollmentRepository } from "./EnrollmentRepository";
+import EnrollmentRepository from "./EnrollmentRepository";
+import EnrollStudentInputData from "./EnrollStudentInputData";
+import EnrollStudentOutputData from "./EnrollStudentOutputData";
 import LevelRepository from "./LevelRepository";
 import ModuleRepository from "./ModuleRepository";
+import RepositoryAbstractFactory from "./RepositoryAbstractFactory";
 import Student from "./Student";
 
 export default class EnrollStudent {
@@ -11,31 +14,28 @@ export default class EnrollStudent {
   classroomRepository: ClassroomRepository;
   enrollmentRepository: EnrollmentRepository;
 
-  constructor(
-    levelRepository: LevelRepository,
-    moduleRepository: ModuleRepository,
-    classRepository: ClassroomRepository,
-    enrollmentRepository: EnrollmentRepository
-  ) {
-    this.levelRepository = levelRepository;
-    this.moduleRepository = moduleRepository;
-    this.classroomRepository = classRepository;
-    this.enrollmentRepository = enrollmentRepository;
+  constructor(repositoryFactory: RepositoryAbstractFactory) {
+    this.levelRepository = repositoryFactory.createLevelRepository();
+    this.moduleRepository = repositoryFactory.createModuleRepository();
+    this.classroomRepository = repositoryFactory.createClassroomRepository();
+    this.enrollmentRepository = repositoryFactory.createEnrollmentRepository();
   }
 
-  execute(enrollmentRequest: any) {
+  execute(
+    enrollStudentInputData: EnrollStudentInputData
+  ): EnrollStudentOutputData {
     const student = new Student(
-      enrollmentRequest.student.name,
-      enrollmentRequest.student.cpf,
-      enrollmentRequest.student.birthDate
+      enrollStudentInputData.studentName,
+      enrollStudentInputData.studentCpf,
+      enrollStudentInputData.studentBirthDate
     );
-    const level = this.levelRepository.findByCode(enrollmentRequest.level);
+    const level = this.levelRepository.findByCode(enrollStudentInputData.level);
     const module = this.moduleRepository.findByCode(
-      enrollmentRequest.level,
-      enrollmentRequest.module
+      enrollStudentInputData.level,
+      enrollStudentInputData.module
     );
     const classroom = this.classroomRepository.findByCode(
-      enrollmentRequest.classroom
+      enrollStudentInputData.classroom
     );
     const studentsEnrolledInClassroom =
       this.enrollmentRepository.findAllByClassroom(
@@ -46,14 +46,12 @@ export default class EnrollStudent {
     if (studentsEnrolledInClassroom.length === classroom.capacity)
       throw new Error("Classroom is over capacity");
     const existingEnrollment = this.enrollmentRepository.findByCpf(
-      enrollmentRequest.student.cpf
+      enrollStudentInputData.studentCpf
     );
     if (existingEnrollment)
       throw new Error("Enrollment with duplicated student is not allowed");
     const enrollmentSequence = this.enrollmentRepository.count() + 1;
-    const issueDate = enrollmentRequest.issueDate
-      ? new Date(enrollmentRequest.issueDate)
-      : new Date();
+    const issueDate = new Date();
     const enrollment = new Enrollment(
       student,
       level,
@@ -61,9 +59,15 @@ export default class EnrollStudent {
       classroom,
       issueDate,
       enrollmentSequence,
-      enrollmentRequest.installments
+      enrollStudentInputData.installments
     );
     this.enrollmentRepository.save(enrollment);
-    return enrollment;
+    const enrollStudentOutputData = new EnrollStudentOutputData(
+      enrollment.code.value
+    );
+    for (const invoice of enrollment.invoices) {
+      enrollStudentOutputData.invoices.push(invoice.clone());
+    }
+    return enrollStudentOutputData;
   }
 }

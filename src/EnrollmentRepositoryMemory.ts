@@ -1,24 +1,23 @@
 import Enrollment from "./Enrollment";
-import { EnrollmentRepository } from "./EnrollmentRepository";
+import EnrollmentRepository from "./EnrollmentRepository";
 
 export default class EnrollmentRepositoryMemory
   implements EnrollmentRepository
 {
   enrollments: Enrollment[];
+  uuid: number;
 
   constructor() {
     this.enrollments = [];
+    this.uuid = Math.floor(Math.random() * 1000);
   }
-  update(enrollment: Enrollment): void {
-    const index = this.enrollments.findIndex(
-      (enrollment) => enrollment.code.value === enrollment.code.value
-    );
-    this.enrollments[index] = enrollment;
-  }
-  findByEnrollmentCode(code: string): Enrollment | undefined {
-    return this.enrollments.find(
+
+  update(enrollment: Enrollment): void {}
+  getByCode(code: string): Enrollment | undefined {
+    const enrollment = this.enrollments.find(
       (enrollment) => enrollment.code.value === code
     );
+    return enrollment;
   }
 
   save(enrollment: Enrollment): void {
