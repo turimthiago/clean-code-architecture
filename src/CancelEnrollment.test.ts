@@ -1,12 +1,10 @@
 import CancelEnrollment from "./CancelEnrollment";
-import EnrollmentRepository from "./EnrollmentRepository";
 import GetEnrollment from "./GetEnrollment";
 import EnrollStudent from "./EnrollStudent";
 import RepositoryMemoryFactory from "./RepositoryMemoryFactory";
 import EnrollStudentInputData from "./EnrollStudentInputData";
-import { transpileModule } from "typescript";
 
-describe("CancelEnrollment usecase", () => {
+describe("CancelEnrollment", () => {
   let repositoryMemoryFactory: RepositoryMemoryFactory;
   let getEnrollment: GetEnrollment;
 
@@ -26,6 +24,7 @@ describe("CancelEnrollment usecase", () => {
     });
     enrollStudent.execute(enrollmentRequest);
   });
+
   test("Should cancel enrollment", () => {
     const request = {
       code: "2021EM1A0001",
@@ -36,4 +35,10 @@ describe("CancelEnrollment usecase", () => {
     const enrollmentData = getEnrollment.execute("2021EM1A0001");
     expect(enrollmentData.activate).toEqual(false);
   });
+
+  test.todo(
+    "Should calculate due date and return status open or overdue for each invoice"
+  );
+
+  test.todo("Should calculate penalty and interests");
 });
