@@ -1,5 +1,6 @@
-import Level from "./Level";
-import LevelRepository from "./LevelRepository";
+import Level from "../../../domain/entity/Level";
+import LevelRepository from "../../../domain/repository/LevelRepository";
+
 export default class LevelRepositoryMemory implements LevelRepository {
   levels: Level[];
 
@@ -20,9 +21,9 @@ export default class LevelRepositoryMemory implements LevelRepository {
     ];
   }
 
-  findByCode(code: string) {
+  async findByCode(code: string) {
     const level = this.levels.find((level) => level.code === code);
     if (!level) throw new Error("Level not found");
-    return level;
+    return Promise.resolve(level);
   }
 }

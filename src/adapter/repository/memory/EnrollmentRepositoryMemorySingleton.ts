@@ -1,8 +1,9 @@
-import EnrollmentRepository from "./EnrollmentRepository";
+import EnrollmentRepository from "../../../domain/repository/EnrollmentRepository";
 import EnrollmentRepositoryMemory from "./EnrollmentRepositoryMemory";
 
 export default class EnrollmentRepositoryMemorySingleton {
   static instance: EnrollmentRepository | undefined;
+  static EnrollmentRepositoryMemorySingleton: EnrollmentRepositoryMemory;
 
   private constructor() {}
 

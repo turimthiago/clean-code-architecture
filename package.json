@@ -1,22 +1,19 @@
 {
-  "name": "clean-code-architecture",
+  "name": "projeto1",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "tsc:init": "tsc --init",
-    "build": "tsc",
-    "test": "tsc && jest dist/"
+    "tsc:build": "tsc",
+    "test": "tsc && jest ./dist"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "typescript": "^4.2.4"
-  },
-  "devDependencies": {
     "@types/jest": "^26.0.23",
     "jest": "^26.6.3",
-    "prettier": "2.3.0"
+    "pg-promise": "^10.10.2",
+    "typescript": "^4.2.4"
   }
 }
